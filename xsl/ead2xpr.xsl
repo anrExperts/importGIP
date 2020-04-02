@@ -46,6 +46,7 @@
                 <physDesc>
                     <extent
                         sketch=""><xsl:apply-templates select="did/physdesc/extent"/></extent>
+                    <xsl:apply-templates select="scopecontent/list[1]/item[matches(., '^Pièce(s)? (annexe(s)?|ajoutée(s)?)', 'i')]"/>
                 </physDesc>
             </sourceDesc>
             <description>
@@ -68,7 +69,7 @@
                 </places>
                 <categories>
                     <designation
-                        rubric=""><xsl:apply-templates select="scopecontent/list[1]/item[matches(., 'Type d’acte', 'i')]"/></designation>
+                        rubric=""><xsl:apply-templates select="scopecontent/list[1]/item[matches(., '^Type d’acte', 'i')]"/></designation>
                 </categories>
                 <procedure>
                     <framework
@@ -82,12 +83,12 @@
                                 when=""/>
                         </sentence>
                     </sentences>
-                    <case><xsl:apply-templates select="scopecontent/list[1]/item[matches(., 'Cause(.*)?:')]"/></case>
+                    <case><xsl:apply-templates select="scopecontent/list[1]/item[matches(., '^Cause(.*)?:')]"/></case>
                     <objects/>
                 </procedure>
                 <participants>
                     <experts>
-                        <xsl:apply-templates select="scopecontent/list/item[matches(., 'Expert\(s\)')]"/>
+                        <xsl:apply-templates select="scopecontent/list/item[matches(., '^Expert\(s\)')]"/>
                     </experts>
                     <clerks>
                         <clerk>
@@ -192,32 +193,32 @@
         </xsl:for-each>
     </xsl:template>
     
-    <xsl:template match="scopecontent/list/item[matches(., 'Type d’acte', 'i')]">
+    <xsl:template match="scopecontent/list/item[matches(., '^Type d’acte', 'i')]">
         <xsl:variable name="string" select="normalize-space(substring-after(., 'Type d’acte :'))"/>
         <xsl:value-of select="concat(upper-case(substring($string, 1, 1)), substring($string, 2))"/>
     </xsl:template>
-    <xsl:template match="scopecontent/list/item[matches(., 'Institution(s)? de nomination\S:')]">
+    <xsl:template match="scopecontent/list/item[matches(., '^Institution(s)? de nomination\S:')]">
         <!-- @quest à placer dans procedure/sentence ?-->
     </xsl:template>
-    <xsl:template match="scopecontent/list/item[matches(., 'Institution(s)? requérante(s)?\S:')]">
+    <xsl:template match="scopecontent/list/item[matches(., '^Institution(s)? requérante(s)?\S:')]">
         <!-- @todo voir avec EC si vraiment exploitable
             @rmq après discussion avec Robert, c'est peut être une source d'erreur…-->
     </xsl:template>
     
-    <xsl:template match="scopecontent/list/item[matches(., 'Nature de l’expertise\S:') or matches(., 'Expertise\S:')]">
+    <xsl:template match="scopecontent/list/item[matches(., '^Nature de l’expertise\S:') or matches(., 'Expertise\S:')]">
         <!-- @rmq (contentieuse/gracieuse) Ne rien en faire, ne correspond plus à la grille d'aujourd'hui + source d'erreur-->
     </xsl:template>
     
-    <xsl:template match="scopecontent/list/item[matches(., 'Cause(.*)?:')]">
+    <xsl:template match="scopecontent/list/item[matches(., '^Cause(.*)?:')]">
         <xsl:variable name="string" select="normalize-space(substring-after(., ':'))"/>
         <xsl:value-of select="concat(upper-case(substring($string, 1, 1)), substring($string, 2))"/>
     </xsl:template>
     
-    <xsl:template match="scopecontent/list/item[matches(., 'Expert\(s\)')]">
+    <xsl:template match="scopecontent/list/item[matches(., '^Expert\(s\)')]">
         <xsl:variable name="string" select="."/>
         <xsl:choose>
-            <xsl:when test="matches(., '[0-9]/')">
-                <xsl:variable name="expert" select="tokenize(substring-after(., '1/'), '[0-9]/')"/>
+            <xsl:when test="matches(., '\d/')">
+                <xsl:variable name="expert" select="tokenize(substring-after(., '1/'), '\d/')"/>
                 <xsl:for-each select="$expert">
                     <xsl:variable name="tokenize" select="tokenize(., ',')"/>
                     <xsl:variable name="name" select="string-join($tokenize[1])"/>
@@ -235,5 +236,67 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
+    
+    <xsl:template match="scopecontent/list/item[matches(., '^Pièce(s)? (annexe(s)?|ajoutée(s)?)', 'i')]">
+        <xsl:variable name="string" select="normalize-space(substring-after(., ':'))"/>
+        <xsl:choose>
+            <xsl:when test="matches($string, 'aucune', 'i')"/>
+            <xsl:when test="matches($string, '\d/')">
+                <xsl:variable name="appendice" select="tokenize(substring-after(., '1/'), '\d/')"/>
+                <appendices xmlns="xpr">
+                    <xsl:for-each select="$appendice">
+                        <xsl:variable name="string" select="normalize-space(.)"/>
+                        <appendice>
+                            <type
+                                type=""/>
+                            <extent/>
+                            <desc><xsl:value-of select="concat(upper-case(substring($string, 1, 1)), substring($string, 2))"/></desc>
+                            <note/>
+                        </appendice>
+                    </xsl:for-each>
+                </appendices>
+            </xsl:when>
+            <xsl:otherwise>
+                <appendices xmlns="xpr">
+                    <appendice>
+                        <type
+                            type=""/>
+                        <extent/>
+                        <desc><xsl:value-of select="normalize-space(concat(upper-case(substring($string, 1, 1)), substring($string, 2)))"/></desc>
+                        <note/>
+                    </appendice>
+                </appendices>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template match="scopecontent/list/item[matches(., '^Partie(s)? requérante(s)?', 'i')]">
+        <xsl:variable name="string" select="normalize-space(substring-after(., ':'))"/>
+        <xsl:choose>
+            <xsl:when test="matches(., '\d/')">
+                <xsl:variable name="person" select="tokenize(substring-after(., '1/'), '\d/')"/>
+                <xsl:for-each select="$person">
+                    <xsl:variable name="token" select="tokenize(., ',')"/>
+                    <person>
+                        <persName>
+                            <surname><xsl:value-of select="$token[1]"/></surname>
+                            <forename><xsl:value-of select="$token[2]"/></forename>
+                        </persName>
+                        <occupation/>
+                    </person>
+                </xsl:for-each>
+            </xsl:when>
+            <xsl:otherwise>
+                <person>
+                    <persName>
+                        <surname/>
+                        <forename/>
+                    </persName>
+                    <occupation/>
+                </person>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
     
 </xsl:stylesheet>
