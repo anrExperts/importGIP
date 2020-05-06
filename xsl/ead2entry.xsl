@@ -95,11 +95,11 @@
     </xsl:template>
     
     <!-- @rmq : comment for FRAN_IR_057886-->
-    <!--<xsl:template 
+    <xsl:template 
         match="scopecontent/p/*[1][self::emph[@render='bold']]
         | scopecontent/list/item/*[1][self::emph[@render='bold']]">
         <xsl:apply-templates/>
-    </xsl:template>-->
+    </xsl:template>
     
     <xsl:template match="emph[@render='underline']">
         <name xmlns="xpr"><xsl:apply-templates/></name>
