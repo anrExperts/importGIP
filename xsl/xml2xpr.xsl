@@ -226,83 +226,88 @@
         | xpr:entry[xpr:key='Partie opposante']/xpr:value
         | xpr:entry[xpr:key='Autre(s) partie(s)']/xpr:value
         | xpr:entry[xpr:key='(Partie opposante) Autre(s) partie(s)']/xpr:value">
-        <xsl:variable name="role">
-            <xsl:choose>
-                <xsl:when test="parent::xpr:entry[xpr:key='Partie requérante']"><xsl:value-of select="'petitioner'"/></xsl:when>
-                <xsl:when test="parent::xpr:entry[xpr:key='Partie opposante' or xpr:key='(Partie opposante) Autre(s) partie(s)']"><xsl:value-of select="'opponent'"/></xsl:when>
-                <xsl:otherwise><xsl:value-of select="''"/></xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
-        <party
-            xmlns="xpr"
-            role="{$role}"
-            presence=""
-            intervention="">
-            <xsl:for-each select="xpr:name">
-                <xsl:variable name="name" select="tokenize(., ',')"/>
-                <person>
-                    <persName>
-                        <surname><xsl:value-of select="normalize-space($name[1])"/></surname>
-                        <forename><xsl:value-of select="normalize-space($name[2])"/></forename>
-                    </persName>
-                    <occupation/>
-                </person>
-            </xsl:for-each>
-            <status/>
-            <!-- il ne peut y avoir qu'un seul expert par partie -->
-            <xsl:choose>
-                <xsl:when test="count(xpr:expert/xpr:name) = 1">
+        <xsl:choose>
+            <xsl:when test="lower-case(normalize-space(.)) = 'sans objet'"/>
+            <xsl:otherwise>
+                <xsl:variable name="role">
                     <xsl:choose>
-                        <xsl:when test="xpr:expert/xpr:name[@ref]">
-                            <expert
-                                ref="{xpr:expert/xpr:name/@ref}"/>
+                        <xsl:when test="parent::xpr:entry[xpr:key='Partie requérante']"><xsl:value-of select="'petitioner'"/></xsl:when>
+                        <xsl:when test="parent::xpr:entry[xpr:key='Partie opposante' or xpr:key='(Partie opposante) Autre(s) partie(s)']"><xsl:value-of select="'opponent'"/></xsl:when>
+                        <xsl:otherwise><xsl:value-of select="''"/></xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                <party
+                    xmlns="xpr"
+                    role="{$role}"
+                    presence=""
+                    intervention="">
+                    <xsl:for-each select="xpr:name">
+                        <xsl:variable name="name" select="tokenize(., ',')"/>
+                        <person>
+                            <persName>
+                                <surname><xsl:value-of select="normalize-space($name[1])"/></surname>
+                                <forename><xsl:value-of select="normalize-space($name[2])"/></forename>
+                            </persName>
+                            <occupation/>
+                        </person>
+                    </xsl:for-each>
+                    <status/>
+                    <!-- il ne peut y avoir qu'un seul expert par partie -->
+                    <xsl:choose>
+                        <xsl:when test="count(xpr:expert/xpr:name) = 1">
+                            <xsl:choose>
+                                <xsl:when test="xpr:expert/xpr:name[@ref]">
+                                    <expert
+                                        ref="{xpr:expert/xpr:name/@ref}"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <expert
+                                        ref=""/>
+                                </xsl:otherwise>
+                            </xsl:choose>
                         </xsl:when>
                         <xsl:otherwise>
                             <expert
                                 ref=""/>
                         </xsl:otherwise>
                     </xsl:choose>
-                </xsl:when>
-                <xsl:otherwise>
-                    <expert
-                        ref=""/>
-                </xsl:otherwise>
-            </xsl:choose>
-            <xsl:if test="xpr:representant">
-                <xsl:choose>
-                    <xsl:when test="xpr:value = '' or xpr:value[matches(., 'Sans objet', 'i')]"/>
-                    <xsl:when test="xpr:representant/xpr:value/xpr:name">
+                    <xsl:if test="xpr:representant">
                         <xsl:choose>
-                            <xsl:when test="count(xpr:representant/xpr:value/xpr:name) &gt; 1"/>
-                            <xsl:otherwise>
+                            <xsl:when test="xpr:value = '' or xpr:value[matches(., 'Sans objet', 'i')]"/>
+                            <xsl:when test="xpr:representant/xpr:value/xpr:name">
                                 <xsl:choose>
-                                    <xsl:when test="xpr:representant/xpr:value[matches(., 'procureur')] or normalize-space(xpr:representant/xpr:key) = 'procureur' or normalize-space(xpr:representant/xpr:key) = 'Procureur'">
-                                        <xsl:variable name="name" select="tokenize(xpr:representant/xpr:value/xpr:name, ',')"/>
-                                        <prosecutor>
-                                            <persName>
-                                                <surname><xsl:value-of select="normalize-space($name[1])"/></surname>
-                                                <forename><xsl:value-of select="normalize-space($name[2])"/></forename>
-                                            </persName>
-                                        </prosecutor>
-                                    </xsl:when>
+                                    <xsl:when test="count(xpr:representant/xpr:value/xpr:name) &gt; 1"/>
                                     <xsl:otherwise>
-                                        <xsl:variable name="name" select="tokenize(xpr:representant/xpr:value/xpr:name, ',')"/>
-                                        <representative>
-                                            <persName>
-                                                <surname><xsl:value-of select="normalize-space($name[1])"/></surname>
-                                                <forename><xsl:value-of select="normalize-space($name[2])"/></forename>
-                                            </persName>
-                                            <occupation><xsl:value-of select="normalize-space(xpr:representant/xpr:value/text()[preceding-sibling::xpr:name])"/></occupation>
-                                        </representative>
+                                        <xsl:choose>
+                                            <xsl:when test="xpr:representant/xpr:value[matches(., 'procureur')] or normalize-space(xpr:representant/xpr:key) = 'procureur' or normalize-space(xpr:representant/xpr:key) = 'Procureur'">
+                                                <xsl:variable name="name" select="tokenize(xpr:representant/xpr:value/xpr:name, ',')"/>
+                                                <prosecutor>
+                                                    <persName>
+                                                        <surname><xsl:value-of select="normalize-space($name[1])"/></surname>
+                                                        <forename><xsl:value-of select="normalize-space($name[2])"/></forename>
+                                                    </persName>
+                                                </prosecutor>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:variable name="name" select="tokenize(xpr:representant/xpr:value/xpr:name, ',')"/>
+                                                <representative>
+                                                    <persName>
+                                                        <surname><xsl:value-of select="normalize-space($name[1])"/></surname>
+                                                        <forename><xsl:value-of select="normalize-space($name[2])"/></forename>
+                                                    </persName>
+                                                    <occupation><xsl:value-of select="normalize-space(xpr:representant/xpr:value/text()[preceding-sibling::xpr:name])"/></occupation>
+                                                </representative>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
                                     </xsl:otherwise>
                                 </xsl:choose>
-                            </xsl:otherwise>
+                            </xsl:when>
+                            <xsl:otherwise/>
                         </xsl:choose>
-                    </xsl:when>
-                    <xsl:otherwise/>
-                </xsl:choose>
-            </xsl:if>
-        </party>
+                    </xsl:if>
+                </party>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     
     <xsl:template match="xpr:entry[xpr:key='Greffier de l’écritoire']/xpr:value">
