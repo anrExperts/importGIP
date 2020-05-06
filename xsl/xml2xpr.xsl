@@ -68,7 +68,17 @@
                     <place
                         type="paris">
                         <address>
-                            <street/>
+                            <xsl:variable name="street">
+                                <xsl:choose>
+                                    <xsl:when test="substring-after(xpr:description/xpr:entry[not(xpr:key)][1], 'Paris,')">
+                                        <xsl:value-of select="substring-after(xpr:description/xpr:entry[not(xpr:key)][1], 'Paris,')"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:value-of select="xpr:description/xpr:entry[not(xpr:key)][1]"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:variable>
+                            <street><xsl:value-of select="normalize-space($street)"/></street>
                             <buildingNumber/>
                         </address>
                         <complement/>
