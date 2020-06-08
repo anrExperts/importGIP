@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
     xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-    exclude-result-prefixes="xs" 
-    xpath-default-namespace="urn:isbn:1-931666-22-9"
-    xmlns="urn:isbn:1-931666-22-9"
+    exclude-result-prefixes="xs"
     xmlns:rico="rico"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     version="2.0">
@@ -95,11 +93,11 @@
     </xsl:template>
     
     <!-- @rmq : comment for FRAN_IR_057886-->
-    <xsl:template 
+    <!--<xsl:template 
         match="scopecontent/p/*[1][self::emph[@render='bold']]
         | scopecontent/list/item/*[1][self::emph[@render='bold']]">
         <xsl:apply-templates/>
-    </xsl:template>
+    </xsl:template>-->
     
     <xsl:template match="emph[@render='underline']">
         <name xmlns="xpr"><xsl:apply-templates/></name>

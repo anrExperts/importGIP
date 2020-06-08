@@ -237,6 +237,7 @@
         | xpr:entry[xpr:key='Autre(s) partie(s)']/xpr:value
         | xpr:entry[xpr:key='(Partie opposante) Autre(s) partie(s)']/xpr:value">
         <xsl:choose>
+            <!-- @todo 1726, il peut y avoir plusieurs noms de parties dans un value. -->
             <xsl:when test="lower-case(normalize-space(.)) = 'sans objet'"/>
             <xsl:otherwise>
                 <xsl:variable name="role">
