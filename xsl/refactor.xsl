@@ -50,7 +50,7 @@
     
     <!--<xsl:template match="xpr:toto | xpr:toto2 | xpr:value[normalize-space(.) = '']"/>-->
     
-    <xsl:template match="xpr:entry/xpr:entry">
+    <!--<xsl:template match="xpr:entry/xpr:entry">
         <value xmlns="xpr"><xsl:value-of select="normalize-space(.)"/></value>
     </xsl:template>
     
@@ -80,7 +80,7 @@
             <xsl:apply-templates/>
             <xsl:apply-templates select="xpr:value"/>
         </entry>
-    </xsl:template>
+    </xsl:template>-->
     
     <!--<xsl:template match="xpr:description/xpr:entry[matches(xpr:key,'partie', 'i')]/xpr:value" mode="tokenize">
         <xsl:variable name="regex" select="'(?:\s?\d/\s?)'"/>
@@ -91,5 +91,56 @@
             </xsl:non-matching-substring>
         </xsl:analyze-string>
     </xsl:template>-->
+    
+    <!--<xsl:template match="xpr:entry[xpr:key='Partie(s) requérante(s)' or xpr:key='Partie(s) opposante(s)'][following-sibling::*[1][self::xpr:expert]]">
+        <xsl:copy>
+            <xsl:apply-templates/>
+            <toto/>
+            <xsl:apply-templates select="following-sibling::*[1][self::xpr:expert]" mode="copy"/>
+        </xsl:copy>
+    </xsl:template>
+    
+    <xsl:template match="xpr:expert[preceding-sibling::*[1][self::xpr:entry[xpr:key='Partie(s) requérante(s)' or xpr:key='Partie(s) opposante(s)']]]"/>
+    <xsl:template match="xpr:expert[preceding-sibling::*[1][self::xpr:entry[xpr:key='Partie(s) requérante(s)' or xpr:key='Partie(s) opposante(s)']]]" mode="copy">
+        <xsl:copy>
+            <xsl:apply-templates/>
+        </xsl:copy>
+    </xsl:template>-->
+    
+    <!--<xsl:template match="xpr:entry[xpr:key='Partie(s) requérante(s)' or xpr:key='Partie(s) opposante(s)'][following-sibling::*[1][self::xpr:representant]]">
+        <xsl:copy>
+            <xsl:apply-templates/>
+            <toto/>
+            <xsl:apply-templates select="following-sibling::*[1][self::xpr:representant]" mode="copy"/>
+        </xsl:copy>
+    </xsl:template>
+    
+    <xsl:template match="xpr:representant[preceding-sibling::*[1][self::xpr:entry[xpr:key='Partie(s) requérante(s)' or xpr:key='Partie(s) opposante(s)']]]"/>
+    <xsl:template match="xpr:representant[preceding-sibling::*[1][self::xpr:entry[xpr:key='Partie(s) requérante(s)' or xpr:key='Partie(s) opposante(s)']]]" mode="copy">
+        <xsl:copy>
+            <xsl:apply-templates/>
+        </xsl:copy>
+    </xsl:template>-->
+    
+    
+    
+    <!--<xsl:template match="xpr:entry[xpr:key='Partie(s) requérante(s)' or xpr:key='Partie(s) opposante(s)'][following-sibling::*[1][self::xpr:procureur]]">
+        <xsl:copy>
+            <xsl:apply-templates/>
+            <toto/>
+            <xsl:apply-templates select="following-sibling::*[1][self::xpr:procureur]" mode="copy"/>
+        </xsl:copy>
+    </xsl:template>
+    
+    <xsl:template match="xpr:procureur[preceding-sibling::*[1][self::xpr:entry[xpr:key='Partie(s) requérante(s)' or xpr:key='Partie(s) opposante(s)']]]"/>
+    <xsl:template match="xpr:procureur[preceding-sibling::*[1][self::xpr:entry[xpr:key='Partie(s) requérante(s)' or xpr:key='Partie(s) opposante(s)']]]" mode="copy">
+        <xsl:copy>
+            <xsl:apply-templates/>
+        </xsl:copy>
+    </xsl:template>-->
+    
+    <xsl:template match="xpr:name[position() &gt; 1]">
+        <xsl:value-of select="normalize-space(.)"/>
+    </xsl:template>
     
 </xsl:stylesheet>
