@@ -462,12 +462,13 @@
                 <xsl:variable name="dates">
                     <xsl:analyze-string select="$content" regex="(\d{{1,2}})\s(janvier|février|mars|avril|mai|juin|juillet|août|aout|septembre|octobre|novembre|décembre)\s(\d{{4}})">
                         <xsl:matching-substring>
-                            <xsl:sequence select="."/>
+                            <xsl:value-of select="."/>
                         </xsl:matching-substring>
+                        <xsl:non-matching-substring/>
                     </xsl:analyze-string>
                 </xsl:variable>
                 <xsl:variable name="date">
-                    <xsl:analyze-string select="$dates[1]" regex="(\d{{1,2}})\s(janvier|février|mars|avril|mai|juin|juillet|août|aout|septembre|octobre|novembre|décembre)\s(\d{{4}})">
+                    <xsl:analyze-string select="$dates" regex="(\d{{1,2}})\s(janvier|février|mars|avril|mai|juin|juillet|août|aout|septembre|octobre|novembre|décembre)\s(\d{{4}})">
                         <xsl:matching-substring>
                             <xsl:variable name="day" select="format-number(number(regex-group(1)), '00')"/>
                             <xsl:variable name="month">
@@ -488,16 +489,13 @@
                                 </xsl:choose>
                             </xsl:variable>
                             <xsl:variable name="year" select="number(regex-group(3))"/>
-                            <xsl:value-of select="concat($year, '-', $month, '-', $day)"/>
+                            <date when="{concat($year, '-', $month, '-', $day)}"/>
                         </xsl:matching-substring>
                     </xsl:analyze-string>
                 </xsl:variable>
                     <sentence xmlns="xpr">
                         <orgName><xsl:value-of select="normalize-space(.)"/></orgName>
-                        <xsl:for-each select="$date">
-                            <date
-                                when="{.}"/>    
-                        </xsl:for-each>
+                        <xsl:sequence select="$date"/>
                     </sentence>
             </xsl:otherwise>
         </xsl:choose>
