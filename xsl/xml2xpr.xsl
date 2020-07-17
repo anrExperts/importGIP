@@ -249,7 +249,7 @@
                     <xsl:for-each select="xpr:value">
                         <xsl:variable name="name" select="tokenize(xpr:name[1], ',')"/>
                         <xsl:variable name="occupation">
-                            <xsl:variable name="data" select="normalize-space(string-join(node()[preceding-sibling::xpr:name], ' '))"/>
+                            <xsl:variable name="data" select="normalize-space(string-join(node()[preceding-sibling::xpr:name[1]], ' '))"/>
                             <xsl:choose>
                                 <xsl:when test="starts-with($data, ',')">
                                     <xsl:value-of select="normalize-space(substring-after($data, ','))"/>
@@ -260,10 +260,20 @@
                             </xsl:choose>
                         </xsl:variable>
                         <person>
-                            <persName>
-                                <surname><xsl:value-of select="normalize-space($name[1])"/></surname>
-                                <forename><xsl:value-of select="normalize-space($name[2])"/></forename>
-                            </persName>
+                            <xsl:choose>
+                                <xsl:when test="$name[2]">
+                                    <persName>
+                                        <surname><xsl:value-of select="normalize-space($name[1])"/></surname>
+                                        <forename><xsl:value-of select="normalize-space($name[2])"/></forename>
+                                    </persName>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <persName>
+                                        <surname><xsl:value-of select="normalize-space($name)"/></surname>
+                                        <forename/>
+                                    </persName>
+                                </xsl:otherwise>
+                            </xsl:choose>
                             <occupation><xsl:value-of select="$occupation"/></occupation>
                         </person>
                     </xsl:for-each>
@@ -513,7 +523,16 @@
     <xsl:template match="xpr:entry[xpr:key='Pièces ajoutées']/xpr:value">
         <xsl:variable name="content" select="normalize-space(.)"/>
         <xsl:variable name="regex" select="'(Z/?1j/\d+/dossier\s?\d+/pièce\s?\d+\W;\s?[^Z/?1j]*)'"/>
-        <xsl:analyze-string select="$content" regex="{$regex}">
+        <xsl:variable name="appendices" select="tokenize($content, '\d/\s?')"/>
+        <xsl:for-each select="$appendices[. != '']">
+            <appendice>
+                <type type=""/>
+                <extent/>
+                <desc><xsl:value-of select="normalize-space(replace(., ';', ':'))"/></desc>
+                <note/>
+            </appendice>
+        </xsl:for-each>
+        <!--<xsl:analyze-string select="$content" regex="{$regex}">
             <xsl:matching-substring>
                 <appendice>
                     <type type=""/>
@@ -530,7 +549,7 @@
                     <note/>
                 </appendice>
             </xsl:non-matching-substring>
-        </xsl:analyze-string>
+        </xsl:analyze-string>-->
     </xsl:template>
     
 </xsl:stylesheet>

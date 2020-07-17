@@ -7631,7 +7631,7 @@
             </entry>
             <entry>
                <key>Pièces ajoutées</key>
-               <value>1/ Résumé du rapport d'expertise fait le 14 décembre 17362/ pouvoir donné le 11 mars 1726 à Pierre Quirot par le marquis de Blénac et Jean Pierre Sedaine.</value>
+               <value>1/ Résumé du rapport d'expertise fait le 14 décembre 1736 2/ pouvoir donné le 11 mars 1726 à Pierre Quirot par le marquis de Blénac et Jean Pierre Sedaine.</value>
             </entry>
             <entry>
                <key>Commentaire libre ou copie d’extraits</key>
@@ -20779,16 +20779,17 @@
                <key>Partie requérante</key>
                <value/>
                <!-- @rmq rétablissement par @sardinecan -->
-            <procureur>
-               <key>Procureur</key>
-               <value>le R. P. <name>Bernard</name>, procureur syndic</value>
-            </procureur>
-            <expert>
-               <key>Expert</key>
-               <value>
-                  <name ref="xpr0073">Debias Aubry, François</name>
-               </value>
-            </expert></entry>
+               <procureur>
+                  <key>Procureur</key>
+                  <value>le R. P. <name>Bernard</name>, procureur syndic</value>
+               </procureur>
+               <expert>
+                  <key>Expert</key>
+                  <value>
+                     <name ref="xpr0073">Debias Aubry, François</name>
+                  </value>
+               </expert>
+            </entry>
             <entry>
                <key>Partie opposante</key>
                <value>
