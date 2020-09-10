@@ -139,8 +139,18 @@
         </xsl:copy>
     </xsl:template>-->
     
-    <xsl:template match="xpr:name[position() &gt; 1]">
+    <!--<xsl:template match="xpr:name[position() &gt; 1]">
         <xsl:value-of select="normalize-space(.)"/>
+    </xsl:template>-->
+    
+    <xsl:template match="xpr:analysis">
+        <xsl:copy>
+            <xsl:for-each select="ancestor::xpr:expertise/xpr:data/xpr:entry[xpr:key = 'Commentaire libre ou copie d’extraits']/xpr:value[preceding-sibling::xpr:value = 'Conclusions']">
+                <xsl:apply-templates select="."/><xsl:text>
+                </xsl:text>
+            </xsl:for-each>
+        </xsl:copy>
     </xsl:template>
+        
     
 </xsl:stylesheet>
